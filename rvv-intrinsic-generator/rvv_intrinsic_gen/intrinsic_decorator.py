@@ -36,22 +36,31 @@ class IntrinsicDecorator():
     self.need_maskedoff = (flags & ExtraAttr.NEED_MASKOFF) != 0
     self.has_maskedoff_name = (flags & ExtraAttr.NEED_MERGE) != 0
     self.flags = flags
+    self.func_suffix = ""
+
+    if flags & ExtraAttr.IS_RNU:
+      self.func_suffix += "_rnu"
+    elif flags & ExtraAttr.IS_RNE:
+      self.func_suffix += "_rne"
+    elif flags & ExtraAttr.IS_RDN:
+      self.func_suffix += "_rdn"
+    elif flags & ExtraAttr.IS_ROD:
+      self.func_suffix += "_rod"
+
     if flags & ExtraAttr.IS_TU:
-      self.func_suffix = "_tu"
+      self.func_suffix += "_tu"
     elif flags & ExtraAttr.IS_MU:
-      self.func_suffix = "_mu"
+      self.func_suffix += "_mu"
     elif flags & ExtraAttr.IS_TAMU:
-      self.func_suffix = "_mu"
+      self.func_suffix += "_mu"
     elif flags & ExtraAttr.IS_TUMA:
-      self.func_suffix = "_tum"
+      self.func_suffix += "_tum"
     elif flags & ExtraAttr.IS_TUMU:
-      self.func_suffix = "_tumu"
+      self.func_suffix += "_tumu"
     elif self.is_mask and flags & ExtraAttr.IS_RED_TUMA:
-      self.func_suffix = "_tum"
+      self.func_suffix += "_tum"
     elif self.is_mask:
-      self.func_suffix = "_m"
-    else:
-      self.func_suffix = ""
+      self.func_suffix += "_m"
 
   def write_text_header(self, g):
     if self.is_mask:
@@ -118,6 +127,15 @@ class IntrinsicDecorators():
           IntrinsicDecorator(ExtraAttr.IS_MASK | ExtraAttr.NEED_MERGE
                              | ExtraAttr.NEED_MASKOFF | ExtraAttr.IS_TAMU)
       ]
+      self.has_masking_maskedoff_policy_vxrm = []
+      # Enumerate all rounding mode possible for vxrm on normal decorators
+      for decorator in self.has_masking_maskedoff_policy:
+        for vxrm in [
+            ExtraAttr.IS_RNU, ExtraAttr.IS_RNE, ExtraAttr.IS_RDN,
+            ExtraAttr.IS_ROD
+        ]:
+          self.has_masking_maskedoff_policy_vxrm.append(
+              IntrinsicDecorator(decorator.flags | vxrm))
       self.has_masking_maskedoff_policy_mu_ma = [
           IntrinsicDecorator(ExtraAttr.IS_MASK | ExtraAttr.NEED_MERGE
                              | ExtraAttr.NEED_MASKOFF | ExtraAttr.IS_MU)
@@ -157,6 +175,16 @@ class IntrinsicDecorators():
           IntrinsicDecorator(),
           IntrinsicDecorator(ExtraAttr.IS_MASK)
       ]
+      # Intrinsics with vxrm specified
+      self.has_masking_maskedoff_policy_vxrm = []
+      # Enumerate all rounding mode possible for vxrm on normal decorators
+      for decorator in self.has_masking_maskedoff_policy:
+        for vxrm in [
+            ExtraAttr.IS_RNU, ExtraAttr.IS_RNE, ExtraAttr.IS_RDN,
+            ExtraAttr.IS_ROD
+        ]:
+          self.has_masking_maskedoff_policy_vxrm.append(
+              IntrinsicDecorator(decorator.flags | vxrm))
       # Intrinsics that are always tail agnostic, and can be masked or unmasked
       self.has_masking_maskedoff_policy_mu_ma = [
           IntrinsicDecorator(),

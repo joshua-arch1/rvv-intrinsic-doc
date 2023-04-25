@@ -116,6 +116,10 @@ class ExtraAttr:
   IS_MU = 1 << 16
   IS_RED_TUMA = 1 << 17
   IS_RED_TAMA = 1 << 18  # for 0.10 (LegacyIntrinsicDecorator)
+  IS_RNU = 1 << 19
+  IS_RNE = 1 << 20
+  IS_RDN = 1 << 21
+  IS_ROD = 1 << 22
 
 
 class InstInfo:
